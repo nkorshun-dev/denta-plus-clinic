@@ -22,7 +22,7 @@ const header = `
     <nav class="nav" id="nav" aria-label="Основная навигация">
       ${NAV.map(([href, label]) => `<a href="${href}">${label}</a>`).join('')}
     </nav>
-    <a class="header__phone" href="tel:${tel(clinic.phones[0])}">${icon('phone', 18)}<span>${clinic.phones[0]}</span></a>
+    <span class="header__phone demo-link" aria-label="Телефон ${clinic.phones[0]} (в демо не активно)" title="Демо-проект: ссылка не активна">${icon('phone', 18)}<span>${clinic.phones[0]}</span></span>
     <a class="btn btn--primary btn--sm header__cta" href="booking.html">Записаться</a>
     <button class="burger" type="button" aria-expanded="false" aria-controls="nav" aria-label="Открыть меню"><span></span><span></span><span></span></button>
   </div>
@@ -34,7 +34,7 @@ const footer = `
     <div>
       <p class="footer__title">Дента Плюс</p>
       <p>${clinic.address}</p>
-      <p>${clinic.phones.map((p) => `<a href="tel:${tel(p)}">${p}</a>`).join('<br>')}</p>
+      <p>${clinic.phones.map((p) => `<span class="demo-link" aria-label="Телефон ${p} (в демо не активно)" title="Демо-проект: ссылка не активна">${p}</span>`).join('<br>')}</p>
     </div>
     <div>
       <p class="footer__title">Разделы</p>

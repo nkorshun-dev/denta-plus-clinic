@@ -54,7 +54,7 @@ const tel = (p) => p.replace(/[^\d+]/g, '');
 $('#contacts-info').innerHTML = `
   <p>${icon('pin', 20)} <span>${esc(clinic.address)}</span></p>
   <p>${icon('clock', 20)} <span>${clinic.hours.map((h) => `${h.days}: ${h.time}`).join('<br>')}</span></p>
-  <p>${icon('phone', 20)} <span>${clinic.phones.map((p) => `<a href="tel:${tel(p)}">${p}</a>`).join('<br>')}</span></p>
+  <p>${icon('phone', 20)} <span>${clinic.phones.map((p) => `<span class="demo-link" aria-label="Телефон ${p} (в демо не активно)" title="Демо-проект: ссылка не активна">${p}</span>`).join('<br>')}</span></p>
   <p><strong>Как добраться.</strong> ${esc(clinic.metro)}</p>
   <p><strong>Парковка.</strong> ${esc(clinic.parking)}</p>`;
 const { lat, lon } = clinic.coords;
