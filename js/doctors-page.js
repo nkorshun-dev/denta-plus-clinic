@@ -30,7 +30,7 @@ function setMeta(d) {
   document.querySelector('meta[name="description"]').content = desc;
   document.querySelector('meta[property="og:title"]').content = document.title;
   document.querySelector('meta[property="og:description"]').content = desc;
-  document.querySelector('link[rel="canonical"]').href = `https://nkorshun-dental.netlify.app/doctor.html?id=${d.id}`;
+  document.querySelector('link[rel="canonical"]').href = `https://nkorshun.dev/denta-plus/doctor.html?id=${d.id}`;
   const ld = document.createElement('script');
   ld.type = 'application/ld+json';
   ld.textContent = JSON.stringify({

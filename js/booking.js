@@ -6,7 +6,7 @@ import { filterServices, highlight } from './price.js';
 import { attachPhoneMask } from './phone-mask.js';
 import { validateName, validatePhone, validateBirth, validateComment, validateConsent } from './validation.js';
 
-const DRAFT_KEY = 'denta-booking-draft';
+const DRAFT_KEY = 'denta-plus:booking-draft';
 const STEPS = ['Услуга', 'Врач', 'Дата и время', 'Контакты'];
 const root = $('#booking-app');
 const params = new URLSearchParams(location.search);
