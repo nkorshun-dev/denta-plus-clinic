@@ -1,9 +1,10 @@
 // Маска +375 (XX) XXX-XX-XX. Принимает ввод с 375, 80 или без кода страны.
+// «+375» маски (или его стёртая часть) — не номер; затем снимаем набранный пользователем 375/80:
+// кодов оператора на 37 и 80 нет, поэтому «+375 (375…» и «+375 (80…» — это префикс, а не номер.
+const localDigits = (raw) => raw.replace(/^\s*\+(375|37|3)?/, '').replace(/\D/g, '').replace(/^375/, '').replace(/^80/, '').slice(0, 9);
+
 export function formatPhone(raw) {
-  let d = raw.replace(/\D/g, '');
-  if (d.startsWith('375')) d = d.slice(3);
-  if (d.startsWith('80')) d = d.slice(2); // кода 80 у операторов нет: это набранная «8 0» после префикса
-  d = d.slice(0, 9);
+  const d = localDigits(raw);
   let out = '+375';
   if (d.length) out += ` (${d.slice(0, 2)}`;
   if (d.length >= 2) out += ')';
@@ -16,9 +17,9 @@ export function formatPhone(raw) {
 export function attachPhoneMask(input) {
   input.addEventListener('input', (e) => {
     // при удалении не навязываем маску, если остался только префикс
-    if (e.inputType && e.inputType.startsWith('delete') && input.value.replace(/\D/g, '').length <= 3) { input.value = ''; return; }
-    // сохраняем позицию курсора по числу цифр слева, чтобы правка в середине не прыгала в конец
-    const digitsLeft = input.value.slice(0, input.selectionStart).replace(/\D/g, '').length;
+    if (e.inputType && e.inputType.startsWith('delete') && !localDigits(input.value)) { input.value = ''; return; }
+    // сохраняем позицию курсора по числу цифр номера слева (+3 цифры префикса 375), чтобы правка в середине не прыгала в конец
+    const digitsLeft = 3 + localDigits(input.value.slice(0, input.selectionStart)).length;
     input.value = formatPhone(input.value);
     let pos = 0, seen = 0;
     while (pos < input.value.length && seen < digitsLeft) if (/\d/.test(input.value[pos++])) seen++;
