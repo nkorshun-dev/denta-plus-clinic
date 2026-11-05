@@ -1,4 +1,6 @@
 // Общие шапка и футер: один шаблон на все страницы.
+// scripts/inline-layout.mjs вписывает эту разметку в каждый *.html (без сдвига макета при загрузке).
+// После правок шаблонов здесь перезапустите: node scripts/inline-layout.mjs
 import { clinic } from './data.js';
 import { icon } from './ui.js';
 
@@ -11,7 +13,14 @@ const NAV = [
 ];
 const tel = (p) => p.replace(/[^\d+]/g, '');
 
-const header = `
+// Текущий раздел: страница врача относится к «Врачам», ссылки с # не подсвечиваются
+export const pageOf = (pathname) => pathname.split('/').pop() || 'index.html';
+const isCurrent = (href, page) => {
+  const [file, hash] = href.split('#');
+  return !hash && (file === page || (page === 'doctor.html' && file === 'doctors.html'));
+};
+
+export const header = (page) => `
 <a class="skip" href="#main">К содержимому</a>
 <header class="header">
   <div class="container header__row">
@@ -20,7 +29,7 @@ const header = `
       <span>Дента Плюс</span>
     </a>
     <nav class="nav" id="nav" aria-label="Основная навигация">
-      ${NAV.map(([href, label]) => `<a href="${href}">${label}</a>`).join('')}
+      ${NAV.map(([href, label]) => `<a href="${href}"${isCurrent(href, page) ? ' aria-current="page"' : ''}>${label}</a>`).join('')}
     </nav>
     <span class="header__phone demo-link" aria-label="Телефон ${clinic.phones[0]} (в демо не активно)" title="Демо-проект: ссылка не активна">${icon('phone', 18)}<span>${clinic.phones[0]}</span></span>
     <a class="btn btn--primary btn--sm header__cta" href="booking.html">Записаться</a>
@@ -28,7 +37,7 @@ const header = `
   </div>
 </header>`;
 
-const footer = `
+export const footer = `
 <footer class="footer">
   <div class="container footer__grid">
     <div>
@@ -54,28 +63,33 @@ const footer = `
   <form method="dialog"><button class="btn btn--primary">Понятно</button></form>
 </dialog>`;
 
-document.getElementById('site-header').innerHTML = header;
-document.getElementById('site-footer').innerHTML = footer;
+if (typeof window !== 'undefined') initLayout(); // в Node (inline-layout.mjs) нужны только шаблоны
 
-// Подсветка текущего раздела
-const page = location.pathname.split('/').pop() || 'index.html';
-document.querySelectorAll('.nav a').forEach((a) => {
-  const [file, hash] = a.getAttribute('href').split('#');
-  if (!hash && file === page) a.setAttribute('aria-current', 'page');
-  if (page === 'doctor.html' && file === 'doctors.html') a.setAttribute('aria-current', 'page');
-});
+function initLayout() {
+  // Разметка уже в HTML — только обработчики; если её нет (не перезапустили скрипт), рисуем как раньше
+  const page = pageOf(location.pathname);
+  const headerSlot = document.getElementById('site-header');
+  const footerSlot = document.getElementById('site-footer');
+  if (!headerSlot.querySelector('.header')) headerSlot.innerHTML = header(page);
+  if (!footerSlot.querySelector('.footer')) footerSlot.innerHTML = footer;
 
-const burger = document.querySelector('.burger');
-const nav = document.getElementById('nav');
-const setMenu = (open) => {
-  nav.classList.toggle('is-open', open);
-  burger.setAttribute('aria-expanded', open);
-  burger.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
-};
-burger.addEventListener('click', () => { setMenu(!nav.classList.contains('is-open')); if (nav.classList.contains('is-open')) nav.querySelector('a').focus(); }); // бургер в DOM после меню: переводим фокус в меню
-nav.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && nav.classList.contains('is-open')) { setMenu(false); burger.focus(); } });
+  // Подсветка текущего раздела: в готовой разметке она уже есть, здесь — по фактическому адресу
+  document.querySelectorAll('.nav a').forEach((a) => {
+    if (isCurrent(a.getAttribute('href'), page)) a.setAttribute('aria-current', 'page');
+  });
 
-const dlg = document.getElementById('privacy');
-document.querySelector('[data-privacy]').addEventListener('click', () => dlg.showModal());
-dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+  const burger = document.querySelector('.burger');
+  const nav = document.getElementById('nav');
+  const setMenu = (open) => {
+    nav.classList.toggle('is-open', open);
+    burger.setAttribute('aria-expanded', open);
+    burger.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
+  };
+  burger.addEventListener('click', () => { setMenu(!nav.classList.contains('is-open')); if (nav.classList.contains('is-open')) nav.querySelector('a').focus(); }); // бургер в DOM после меню: переводим фокус в меню
+  nav.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && nav.classList.contains('is-open')) { setMenu(false); burger.focus(); } });
+
+  const dlg = document.getElementById('privacy');
+  document.querySelector('[data-privacy]').addEventListener('click', () => dlg.showModal());
+  dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+}

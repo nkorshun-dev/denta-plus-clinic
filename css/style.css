@@ -113,6 +113,7 @@ a { color: var(--accent-dark); }
 .check { display: flex; gap: 10px; align-items: center; min-height: 44px; cursor: pointer; }
 .check input { width: 22px; height: 22px; margin: 2px 0 0; accent-color: var(--accent); flex: none; }
 .calc__result { background: var(--accent-soft); border-radius: var(--radius); padding: 22px; align-self: start; }
+.calc__result .muted { color: #5a6c74; } /* --muted на --accent-soft даёт 4.49:1, чуть темнее — 4.7:1 */
 .calc__label { margin: 0; font-weight: 600; }
 .calc__total { font: 800 2.6rem/1.1 var(--font-head); margin: 4px 0; }
 .calc__months { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 16px 0; }
@@ -166,6 +167,8 @@ a { color: var(--accent-dark); }
 .page-head { background: var(--bg-soft); padding: 36px 0 28px; }
 .page-head p { margin: 0; }
 .page-body { padding: 28px 0 64px; }
+/* Футер уже в HTML, а содержимое внутренних страниц рисует JS: держим футер ниже первого экрана, пока оно не появилось (иначе CLS) */
+#main:has(.page-body) { min-height: calc(100vh - 68px); }
 .toolbar { display: grid; gap: 12px; margin-bottom: 20px; }
 @media (min-width: 768px) { .toolbar { grid-template-columns: 2fr 1fr; } }
 .field { margin: 0 0 18px; border: 0; padding: 0; min-width: 0; }
