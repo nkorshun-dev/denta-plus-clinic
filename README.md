@@ -74,3 +74,6 @@ npx serve -l 5192 .
 ## Деплой на Netlify
 
 Перетащите папку проекта на https://app.netlify.com/drop или подключите репозиторий: настройки уже в `netlify.toml` (publish = ".", сборки нет).
+
+<!-- QA 2026-11-05 -->
+QA 05.11.2026: local Inter/Manrope WOFF2 fonts (Latin/Cyrillic, swap/preload), css/fonts.css and fonts/ with OFL licenses. Existing hero has no raster photo. scripts/inline-layout.mjs --check validates inlined header/footer.
